@@ -35,17 +35,36 @@ const Home = () => {
 		}
 	}
 
+	const agregarTarea = async (e) => {
+		e.preventDefault();
+		try {
+			const response = await fetch("https://playground.4geeks.com/todo/todos/rafa", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ label: tarea, is_done: false })
+			});
+			if (response.status == 201) {
+				mostrarTarea()
+				setTarea(""); // Limpiar el input
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+	
 
-	const agregarTarea = (e) => {
-		e.preventDefault()
-		// console.log(tarea)
-		setLista([...lista, tarea])
-		setTarea("")
-	}
-
-	const borrarTarea = (index) => {
-		let newList = lista.filter((item, i) => i !== index);
-		setLista(newList)
+	const borrarTarea = async (id) => {
+		try {
+			const response = await fetch("https://playground.4geeks.com/todo/todos/"+id, {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+			});
+			if (response.status == 204) {
+				mostrarTarea()
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	useEffect(() => {
@@ -68,7 +87,7 @@ const Home = () => {
 					<li className="list-group-item" key={index}>          {/* // colocamos key por el map  */}
 						{tarea.label}
 						{/* borrar tareas */}
-						<button className="btn btn-outline-danger float-end icono" onClick={() => borrarTarea(index)}>X</button>
+						<button className="btn btn-outline-danger float-end icono" onClick={() => borrarTarea(tarea.id)}>X</button>
 					</li>
 
 				))}
